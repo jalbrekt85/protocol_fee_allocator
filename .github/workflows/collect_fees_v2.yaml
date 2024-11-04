@@ -39,6 +39,7 @@ jobs:
           DRPC_KEY: ${{ secrets.DRPC_KEY }}
         run: |
           cd v2
+          git fetch origin
           git checkout initial-refactor
           git pull origin initial-refactor
           pip3 install -r requirements.txt
