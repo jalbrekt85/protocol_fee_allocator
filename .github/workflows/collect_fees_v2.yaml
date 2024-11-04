@@ -46,12 +46,19 @@ jobs:
           DRPC_KEY: ${{ secrets.DRPC_KEY }}
         run: |
           cd v2
-          git checkout biweekly-runs
-          git pull origin biweekly-runs
+          git checkout initial-refactor
+          git pull origin initial-refactor
           pip3 install -r requirements.txt
           python3 main.py --ts_now ${{ steps.date_calc.outputs.end_timestamp }} --ts_in_the_past ${{ steps.date_calc.outputs.start_timestamp }} --fees_file_name fees_${{ steps.date_calc.outputs.date_range_string }}.json --output_file_name incentives_${{ steps.date_calc.outputs.date_range_string }}.csv
           cd ..
           cp v2/fee_allocator/allocations/incentives/* fee_allocator/allocations/v2
+
+      - name: Generate diff report
+        run: |
+          python3 diff_incentives.py \
+            fee_allocator/allocations/incentives_${{ steps.date_calc.outputs.date_range_string }}.csv \
+            fee_allocator/allocations/v2/incentives_${{ steps.date_calc.outputs.date_range_string }}.csv \
+            fee_allocator/allocations/diffs/incentives_diff_${{ steps.date_calc.outputs.date_range_string }}.csv
 
       - name: Create PR
         id: cpr
