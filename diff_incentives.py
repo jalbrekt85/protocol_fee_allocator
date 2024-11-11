@@ -22,7 +22,9 @@ def diff_incentives(v1_path, v2_path, output_path):
             v2_col = pd.to_numeric(df_v2[col], errors='coerce')
             
             diff_amount = v2_col - v1_col
-            diff_pct = ((v2_col - v1_col) / v1_col * 100).round(2)
+            diff_pct = np.where(diff_amount == 0, 
+                              0, 
+                              ((v2_col - v1_col) / v1_col * 100).round(2))
             diff_df[f'{col}_diff'] = diff_amount.astype(str) + ' (' + diff_pct.astype(str) + '%)'
 
     diff_df.to_csv(output_path, index=False)
