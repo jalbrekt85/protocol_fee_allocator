@@ -26,6 +26,8 @@ from fee_allocator.helpers import fetch_hh_aura_bribs
 from fee_allocator.helpers import get_balancer_pool_snapshots
 from fee_allocator.helpers import get_block_by_ts
 from fee_allocator.helpers import get_twap_bpt_price
+from fee_allocator.accounting.distribution import filter_dusty_bal_incentives
+from fee_allocator.accounting.settings import MIN_VERBAL_BRIBE_AFTER_ALL_REDISTRIBUTIONS
 
 
 def run_fees(
@@ -150,8 +152,12 @@ def run_fees(
             Decimal(fee_constants["min_aura_incentive"]),
             Decimal(fee_constants["min_vote_incentive_amount"]),
         )
+        # Filter BAL incentives under 75 bucks to Aura
+        filtered_incentives = filter_dusty_bal_incentives(
+            redistributed_incentives, MIN_VERBAL_BRIBE_AFTER_ALL_REDISTRIBUTIONS
+        )
         ## Add data about last join/exit
-        incentives[chain.value] = add_last_join_exit(redistributed_incentives, chain)
+        incentives[chain.value] = add_last_join_exit(filtered_incentives, chain)
     # Wrap into dataframe and sort by earned fees and store to csv
     joint_incentives_data = {
         **incentives[Chains.MAINNET.value],
