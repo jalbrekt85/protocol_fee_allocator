@@ -152,7 +152,7 @@ def run_fees(
             Decimal(fee_constants["min_aura_incentive"]),
             Decimal(fee_constants["min_vote_incentive_amount"]),
         )
-        # Filter BAL incentives under 75 bucks to Aura
+        # Filter BAL incentives under 75 bucks to Aura 
         filtered_incentives = filter_dusty_bal_incentives(
             redistributed_incentives, MIN_VERBAL_BRIBE_AFTER_ALL_REDISTRIBUTIONS
         )
