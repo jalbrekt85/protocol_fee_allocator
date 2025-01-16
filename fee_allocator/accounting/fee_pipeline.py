@@ -83,7 +83,8 @@ def run_fees(
                 f"Chain {chain.value} has {fees_to_distribute[chain.value]} in fees but no core pools defined. Setting fees to 0."
             )
             fees_to_distribute[chain.value] = 0
-        
+            continue
+
         # if chain.value == Chains.ZKEVM.value:
         #     print("SKIPPING ZKEVM DUE TO RPC ISSUES, CHANGE ME WHEN FIXED!")
         #     continue
