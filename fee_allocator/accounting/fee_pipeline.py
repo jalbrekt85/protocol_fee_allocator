@@ -78,6 +78,12 @@ def run_fees(
                 print(
                     f"Warning pool {pool_id}({description}) on chain {chain} is in the core pools list but does not have a gauge.  Skipping."
                 )
+        if not pools:
+            logger.warning(
+                f"Chain {chain.value} has {fees_to_distribute[chain.value]} in fees but no core pools defined. Setting fees to 0."
+            )
+            fees_to_distribute[chain.value] = 0
+        
         # if chain.value == Chains.ZKEVM.value:
         #     print("SKIPPING ZKEVM DUE TO RPC ISSUES, CHANGE ME WHEN FIXED!")
         #     continue
