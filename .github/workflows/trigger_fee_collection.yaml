@@ -30,13 +30,8 @@ jobs:
           
           echo "JSON Path: $JSON_PATH"
           
-          # Extract the end date from filename (assuming format fees_YYYY-MM-DD_YYYY-MM-DD.json)
-          END_DATE=$(basename "$JSON_PATH" .json | cut -d'_' -f4)
-          
-          if [ -z "$END_DATE" ]; then
-            echo "Could not extract end date from filename"
-            exit 1
-          fi
+          # Extract the end date from filename using cut
+          END_DATE=$(basename "$JSON_PATH" | cut -d'_' -f3 | cut -d'.' -f1)
           
           echo "end-date=$END_DATE" >> $GITHUB_OUTPUT
 
