@@ -1,0 +1,45 @@
+name: Trigger Fee Collection on Mimic Merge
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'fee_allocator/fees_collected/*.json'
+
+jobs:
+  trigger_fee_collection:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get date from filename
+        id: get-date
+        run: |
+          # Get the path of the changed JSON file
+          JSON_PATH=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep 'fee_allocator/fees_collected/.*\.json$' | head -n 1)
+          
+          if [ -z "$JSON_PATH" ]; then
+            echo "No JSON file found in recent changes."
+            exit 1
+          fi
+          
+          echo "JSON Path: $JSON_PATH"
+          
+          # Extract the date from filename (assuming format YYYYMMDD)
+          DATE_STRING=$(basename "$JSON_PATH" .json | grep -o '[0-9]\{8\}')
+          
+          # Convert YYYYMMDD to YYYY-MM-DD
+          FORMATTED_DATE=$(date -d "${DATE_STRING}" '+%Y-%m-%d')
+          
+          echo "end-date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
+
+      - name: Trigger collect_fees_v2 workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: (V1&V2)Process and run reports for a fee round
+          inputs: '{"end_day": "${{ steps.get-date.outputs.end-date }}"}' 
