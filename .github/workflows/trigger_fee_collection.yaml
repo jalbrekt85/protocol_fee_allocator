@@ -30,13 +30,15 @@ jobs:
           
           echo "JSON Path: $JSON_PATH"
           
-          # Extract the date from filename (assuming format YYYYMMDD)
-          DATE_STRING=$(basename "$JSON_PATH" .json | grep -o '[0-9]\{8\}')
+          # Extract the end date from filename (assuming format fees_YYYY-MM-DD_YYYY-MM-DD.json)
+          END_DATE=$(basename "$JSON_PATH" .json | cut -d'_' -f4)
           
-          # Convert YYYYMMDD to YYYY-MM-DD
-          FORMATTED_DATE=$(date -d "${DATE_STRING}" '+%Y-%m-%d')
+          if [ -z "$END_DATE" ]; then
+            echo "Could not extract end date from filename"
+            exit 1
+          fi
           
-          echo "end-date=$FORMATTED_DATE" >> $GITHUB_OUTPUT
+          echo "end-date=$END_DATE" >> $GITHUB_OUTPUT
 
       - name: Trigger collect_fees_v2 workflow
         uses: benc-uk/workflow-dispatch@v1
