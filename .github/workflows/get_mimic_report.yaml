@@ -46,8 +46,3 @@ jobs:
           branch-suffix: timestamp
           delete-branch: true
           labels: "Biweekly-Mimic-Report"
-          reviewers: |
-            gosuto-inzasheru
-            Xeonus
-            jalbrekt85
-            Zen-Maxi
